@@ -27,6 +27,10 @@ public class Employee {
     private String firstName;
 
     @Size(max = 50)
+    @Column(name = "second_name", nullable = false, length = 50)
+    private String secondName;
+
+    @Size(max = 50)
     @Column(name = "last_name", length = 50)
     private String lastName;
 

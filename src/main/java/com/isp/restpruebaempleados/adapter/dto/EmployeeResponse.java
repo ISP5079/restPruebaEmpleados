@@ -17,6 +17,8 @@ public class EmployeeResponse {
     private Long id;
     @Schema(description = "Employee First Name", example = "Juan")
     private String firstName;
+    @Schema(description = "Employee Second Name", example = "Arturo")
+    private String secondName;
     @Schema(description = "Employee Last Name", example = "Perez")
     private String lastName;
     @Schema(description = "Maternal Surname", example = "Torres")

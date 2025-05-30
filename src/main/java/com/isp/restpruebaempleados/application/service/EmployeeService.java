@@ -33,6 +33,7 @@ public class EmployeeService {
     public EmployeeResponse create(CreateEmployeeRequest request) {
         Employee employee = Employee.builder()
                 .firstName(request.getFirstName())
+                .secondName(request.getSecondName())
                 .lastName(request.getLastName())
                 .maternalSurname(request.getMaternalSurname())
                 .age(request.getAge())
@@ -96,6 +97,7 @@ public class EmployeeService {
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + id));
 
         Optional.ofNullable(request.getFirstName()).ifPresent(employee::setFirstName);
+        Optional.ofNullable(request.getSecondName()).ifPresent(employee::setSecondName);
         Optional.ofNullable(request.getLastName()).ifPresent(employee::setLastName);
         Optional.ofNullable(request.getMaternalSurname()).ifPresent(employee::setMaternalSurname);
         Optional.ofNullable(request.getAge()).ifPresent(employee::setAge);
@@ -111,6 +113,7 @@ public class EmployeeService {
         return EmployeeResponse.builder()
                 .id(e.getId())
                 .firstName(e.getFirstName())
+                .secondName(e.getSecondName())
                 .lastName(e.getLastName())
                 .maternalSurname(e.getMaternalSurname())
                 .age(e.getAge())

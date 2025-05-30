@@ -21,6 +21,10 @@ public class UpdateEmployeeRequest {
     private String firstName;
 
     @Size(max = 50)
+    @Schema(description = "Second Name", example = "Arturo")
+    private String SecondName;
+
+    @Size(max = 50)
     @Schema(description = "Last Name", example = "Perez")
     private String lastName;
 

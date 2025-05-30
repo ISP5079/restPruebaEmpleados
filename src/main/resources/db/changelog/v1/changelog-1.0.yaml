@@ -19,6 +19,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: second_name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: true
+              - column:
                   name: last_name
                   type: VARCHAR(50)
               - column:

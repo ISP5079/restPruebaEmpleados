@@ -21,6 +21,10 @@ public class CreateEmployeeRequest {
     @Schema(description = "First Name", example = "Juan")
     private String firstName;
 
+    @Size(max = 50)
+    @Schema(description = "Second Name", example = "Arturo")
+    private String SecondName;
+
     @NotBlank
     @Size(max = 50)
     @Schema(description = "Last Name", example = "Perez")
