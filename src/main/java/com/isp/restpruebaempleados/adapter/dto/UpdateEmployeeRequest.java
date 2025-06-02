@@ -2,8 +2,6 @@ package com.isp.restpruebaempleados.adapter.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -22,7 +20,7 @@ public class UpdateEmployeeRequest {
 
     @Size(max = 50)
     @Schema(description = "Second Name", example = "Arturo")
-    private String SecondName;
+    private String secondName;
 
     @Size(max = 50)
     @Schema(description = "Last Name", example = "Perez")

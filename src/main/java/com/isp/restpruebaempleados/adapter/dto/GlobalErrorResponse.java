@@ -23,7 +23,8 @@ public class GlobalErrorResponse {
     @Schema(description = "Message", example = "Invalid request")
     String message;
     @Schema(description = "Errors", example = """
-            
+            {"firstName": "no debe estar vacío",
+            "age": "no debe ser nulo"}
             """)
     Map<String, String> errors;
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.isp.restpruebaempleados.adapter.dto.CreateEmployeeRequest;
 import com.isp.restpruebaempleados.adapter.dto.EmployeeResponse;
 import com.isp.restpruebaempleados.adapter.dto.UpdateEmployeeRequest;
-import com.isp.restpruebaempleados.application.service.EmployeeService;
+import com.isp.restpruebaempleados.application.service.EmployeeServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ class EmployeeControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private EmployeeService service;
+    private EmployeeServiceImpl service;
 
     @Test
     @DisplayName("GET /employees/find/all should return list")
@@ -42,7 +42,7 @@ class EmployeeControllerTest {
                 EmployeeResponse.builder().id(2L).firstName("Isabel").build()
         );
 
-        when(service.findAll()).thenReturn(mockList);
+        when(service.findAllEmployees()).thenReturn(mockList);
 
         mockMvc.perform(get("/employees/find/all"))
                 .andExpect(status().isOk())
@@ -58,7 +58,7 @@ class EmployeeControllerTest {
 
         var response = EmployeeResponse.builder().id(1L).build();
 
-        when(service.create(any())).thenReturn(response);
+        when(service.createEmployee(any())).thenReturn(response);
 
         mockMvc.perform(post("/employees/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ class EmployeeControllerTest {
                 .firstName("Fernando")
                 .build();
 
-        when(service.create(any())).thenReturn(response);
+        when(service.createEmployee(any())).thenReturn(response);
 
         mockMvc.perform(post("/employees/create")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +153,7 @@ class EmployeeControllerTest {
                 .firstName("Israel")
                 .build();
 
-        when(service.update(eq(1L), any())).thenReturn(response);
+        when(service.updateEmployee(eq(1L), any())).thenReturn(response);
 
         mockMvc.perform(put("/employees/update/1")
                         .contentType(MediaType.APPLICATION_JSON)

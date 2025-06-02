@@ -2,12 +2,15 @@ package com.isp.restpruebaempleados.application.service;
 
 import com.isp.restpruebaempleados.adapter.dto.CreateEmployeeRequest;
 import com.isp.restpruebaempleados.adapter.dto.UpdateEmployeeRequest;
+import com.isp.restpruebaempleados.adapter.mapper.EmployeeMapper;
 import com.isp.restpruebaempleados.domain.model.Employee;
-import com.isp.restpruebaempleados.infrastructure.repository.EmployeeRepository;
+import com.isp.restpruebaempleados.domain.port.in.EmployeeService;
+import com.isp.restpruebaempleados.domain.port.out.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentMatchers;
 
 import java.util.List;
@@ -24,7 +27,7 @@ class EmployeeServiceTest {
     @BeforeEach
     void setUp() {
         employeeRepository = mock(EmployeeRepository.class);
-        employeeService = new EmployeeService(employeeRepository);
+        employeeService = new EmployeeServiceImpl(employeeRepository, Mappers.getMapper(EmployeeMapper.class));
     }
 
     @Test
@@ -43,7 +46,7 @@ class EmployeeServiceTest {
 
         when(employeeRepository.save(ArgumentMatchers.any(Employee.class))).thenReturn(saved);
 
-        var result = employeeService.create(request);
+        var result = employeeService.createEmployee(request);
 
         verify(employeeRepository).save(any(Employee.class));
         assertNotNull(result);
@@ -60,7 +63,7 @@ class EmployeeServiceTest {
                 Employee.builder().id(2L).firstName("Ma. de Jesus").build()
         ));
 
-        var result = employeeService.findAll();
+        var result = employeeService.findAllEmployees();
 
         assertEquals(2, result.size());
         assertEquals("Isabel", result.get(0).getFirstName());
@@ -72,7 +75,7 @@ class EmployeeServiceTest {
     void testDeleteById_whenExists() {
         when(employeeRepository.existsById(1L)).thenReturn(true);
 
-        employeeService.deleteById(1L);
+        employeeService.deleteEmployeeById(1L);
 
         verify(employeeRepository).deleteById(1L);
     }
@@ -82,7 +85,7 @@ class EmployeeServiceTest {
     void testDeleteById_whenNotExists() {
         when(employeeRepository.existsById(999L)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> employeeService.deleteById(999L));
+        assertThrows(EntityNotFoundException.class, () -> employeeService.deleteEmployeeById(999L));
     }
 
     @Test
@@ -100,7 +103,7 @@ class EmployeeServiceTest {
         when(employeeRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(employeeRepository.save(existing)).thenReturn(existing);
 
-        var result = employeeService.update(1L, updateRequest);
+        var result = employeeService.updateEmployee(1L, updateRequest);
 
         assertEquals("Isabel", result.getFirstName());
         verify(employeeRepository).save(existing);
@@ -113,6 +116,6 @@ class EmployeeServiceTest {
 
         UpdateEmployeeRequest request = new UpdateEmployeeRequest();
 
-        assertThrows(EntityNotFoundException.class, () -> employeeService.update(1L, request));
+        assertThrows(EntityNotFoundException.class, () -> employeeService.updateEmployee(1L, request));
     }
 }

@@ -3,7 +3,7 @@ package com.isp.restpruebaempleados.adapter.controller;
 import com.isp.restpruebaempleados.adapter.dto.CreateEmployeeRequest;
 import com.isp.restpruebaempleados.adapter.dto.EmployeeResponse;
 import com.isp.restpruebaempleados.adapter.dto.UpdateEmployeeRequest;
-import com.isp.restpruebaempleados.application.service.EmployeeService;
+import com.isp.restpruebaempleados.domain.port.in.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,7 +39,7 @@ public class EmployeeController {
     @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping("/find/all")
     public ResponseEntity<List<EmployeeResponse>> getAll() {
-        return ResponseEntity.ok(service.findAll());
+        return ResponseEntity.ok(service.findAllEmployees());
     }
 
     /**
@@ -54,7 +54,7 @@ public class EmployeeController {
     @ApiResponse(responseCode = "201", description = "Created")
     @PostMapping("/create")
     public ResponseEntity<EmployeeResponse> create(@Valid @RequestBody CreateEmployeeRequest request) {
-        EmployeeResponse response = service.create(request);
+        EmployeeResponse response = service.createEmployee(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -90,7 +90,7 @@ public class EmployeeController {
     @PutMapping("/update/{id}")
     public ResponseEntity<EmployeeResponse> update(@PathVariable Long id,
                                                    @Valid @RequestBody UpdateEmployeeRequest request) {
-        EmployeeResponse response = service.update(id, request);
+        EmployeeResponse response = service.updateEmployee(id, request);
         return ResponseEntity.ok(response);
     }
 
@@ -105,7 +105,7 @@ public class EmployeeController {
     @ApiResponse(responseCode = "204", description = "No Content")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.deleteById(id);
+        service.deleteEmployeeById(id);
         return ResponseEntity.noContent().build();
     }
 }

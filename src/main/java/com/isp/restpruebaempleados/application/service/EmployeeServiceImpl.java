@@ -3,8 +3,10 @@ package com.isp.restpruebaempleados.application.service;
 import com.isp.restpruebaempleados.adapter.dto.CreateEmployeeRequest;
 import com.isp.restpruebaempleados.adapter.dto.EmployeeResponse;
 import com.isp.restpruebaempleados.adapter.dto.UpdateEmployeeRequest;
+import com.isp.restpruebaempleados.adapter.mapper.EmployeeMapper;
 import com.isp.restpruebaempleados.domain.model.Employee;
-import com.isp.restpruebaempleados.infrastructure.repository.EmployeeRepository;
+import com.isp.restpruebaempleados.domain.port.in.EmployeeService;
+import com.isp.restpruebaempleados.domain.port.out.EmployeeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
@@ -17,11 +19,15 @@ import java.util.Optional;
  * del repositorio subyacente.
  */
 @Service
-public class EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final EmployeeMapper employeeMapper;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    private static final String NOT_FOUND_MESSAGE = "Employee not found with ID: %d";
+
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;
+        this.employeeMapper = employeeMapper;
     }
 
     /**
@@ -30,7 +36,7 @@ public class EmployeeService {
      * @param request el {@link CreateEmployeeRequest} que contiene los detalles del nuevo empleado
      * @return un {@link EmployeeResponse} con los datos del empleado creado
      */
-    public EmployeeResponse create(CreateEmployeeRequest request) {
+    public EmployeeResponse createEmployee(CreateEmployeeRequest request) {
         Employee employee = Employee.builder()
                 .firstName(request.getFirstName())
                 .secondName(request.getSecondName())
@@ -43,7 +49,7 @@ public class EmployeeService {
                 .build();
 
         Employee saved = employeeRepository.save(employee);
-        return mapToResponse(saved);
+        return employeeMapper.toEmployeeResponse(saved);
     }
 
     /**
@@ -54,7 +60,7 @@ public class EmployeeService {
      */
     public List<EmployeeResponse> createMany(List<@Valid CreateEmployeeRequest> requests) {
         return requests.stream()
-                .map(this::create)
+                .map(this::createEmployee)
                 .toList();
     }
 
@@ -63,9 +69,9 @@ public class EmployeeService {
      *
      * @return una lista de instancias de {@link EmployeeResponse} que representan a todos los empleados
      */
-    public List<EmployeeResponse> findAll() {
+    public List<EmployeeResponse> findAllEmployees() {
         return employeeRepository.findAll().stream()
-                .map(this::mapToResponse)
+                .map(employeeMapper::toEmployeeResponse)
                 .toList();
     }
 
@@ -76,9 +82,9 @@ public class EmployeeService {
      * @param id el ID del empleado que se desea eliminar
      * @throws EntityNotFoundException si no se encuentra un empleado con el ID proporcionado
      */
-    public void deleteById(Long id) {
+    public void deleteEmployeeById(Long id) {
         if (!employeeRepository.existsById(id)) {
-            throw new EntityNotFoundException("Employee not found with ID: " + id);
+            throw new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, id));
         }
         employeeRepository.deleteById(id);
     }
@@ -92,9 +98,9 @@ public class EmployeeService {
      * @return el {@link EmployeeResponse} que representa al empleado actualizado
      * @throws EntityNotFoundException si no se encuentra un empleado con el ID proporcionado
      */
-    public EmployeeResponse update(Long id, UpdateEmployeeRequest request) {
+    public EmployeeResponse updateEmployee(Long id, UpdateEmployeeRequest request) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_FOUND_MESSAGE, id)));
 
         Optional.ofNullable(request.getFirstName()).ifPresent(employee::setFirstName);
         Optional.ofNullable(request.getSecondName()).ifPresent(employee::setSecondName);
@@ -106,20 +112,6 @@ public class EmployeeService {
         Optional.ofNullable(request.getPosition()).ifPresent(employee::setPosition);
 
         Employee updated = employeeRepository.save(employee);
-        return mapToResponse(updated);
-    }
-
-    private EmployeeResponse mapToResponse(Employee e) {
-        return EmployeeResponse.builder()
-                .id(e.getId())
-                .firstName(e.getFirstName())
-                .secondName(e.getSecondName())
-                .lastName(e.getLastName())
-                .maternalSurname(e.getMaternalSurname())
-                .age(e.getAge())
-                .gender(e.getGender())
-                .birthDate(e.getBirthDate())
-                .position(e.getPosition())
-                .build();
+        return employeeMapper.toEmployeeResponse(updated);
     }
 }

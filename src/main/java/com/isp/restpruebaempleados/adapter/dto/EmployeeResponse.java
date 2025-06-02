@@ -1,7 +1,6 @@
 package com.isp.restpruebaempleados.adapter.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
